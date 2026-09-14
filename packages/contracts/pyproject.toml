@@ -1,0 +1,13 @@
+[project]
+name = "synthos-contracts"
+version = "0.1.0"
+description = "Shared contracts and types for Synthos-OS"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
