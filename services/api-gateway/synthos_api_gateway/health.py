@@ -1,8 +1,7 @@
 """Health check endpoints and monitoring"""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
-from typing import Optional
 import time
 import asyncio
 from .logging import log_health_check, get_logger
@@ -80,15 +79,17 @@ async def health_check() -> HealthCheckResponse:
     """Comprehensive health check endpoint"""
     from .config import settings
 
-    checks = {}
+    checks: dict[str, dict[str, str | float]] = {}
 
     # Run all checks in parallel
-    db_status, redis_status, ollama_status = await asyncio.gather(
+    results = await asyncio.gather(
         check_database(),
         check_redis(),
         check_ollama(),
         return_exceptions=True,
     )
+
+    db_status, redis_status, ollama_status = results
 
     # Handle exceptions from gather
     if isinstance(db_status, Exception):
