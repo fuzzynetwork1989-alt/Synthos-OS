@@ -1,0 +1,81 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8000']
+    metrics_path: '/metrics'
+
+  - job_name: 'model-gateway'
+    static_configs:
+      - targets: ['model-gateway:8002']
+    metrics_path: '/metrics'
+
+  - job_name: 'memory-engine'
+    static_configs:
+      - targets: ['memory-engine:8003']
+    metrics_path: '/metrics'
+
+  - job_name: 'rsi-engine'
+    static_configs:
+      - targets: ['rsi-engine:8004']
+    metrics_path: '/metrics'
+
+  - job_name: 'cognitive-engine'
+    static_configs:
+      - targets: ['cognitive-engine:8005']
+    metrics_path: '/metrics'
+
+  - job_name: 'tool-execution-engine'
+    static_configs:
+      - targets: ['tool-execution-engine:8006']
+    metrics_path: '/metrics'
+
+  - job_name: 'workflow-engine'
+    static_configs:
+      - targets: ['workflow-engine:8007']
+    metrics_path: '/metrics'
+
+  - job_name: 'policy-engine'
+    static_configs:
+      - targets: ['policy-engine:8008']
+    metrics_path: '/metrics'
+
+  - job_name: 'evaluation-engine'
+    static_configs:
+      - targets: ['evaluation-engine:8009']
+    metrics_path: '/metrics'
+
+  - job_name: 'device-gateway'
+    static_configs:
+      - targets: ['device-gateway:8010']
+    metrics_path: '/metrics'
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    metrics_path: '/metrics'
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'

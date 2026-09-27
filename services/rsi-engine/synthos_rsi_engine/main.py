@@ -274,5 +274,5 @@ if __name__ == "__main__":
         "synthos_rsi_engine.main:app",
         host=settings.host,
         port=settings.port,
-        reload=settings.debug
+        reload=settings.rsi_debug
     )

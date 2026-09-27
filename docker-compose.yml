@@ -56,6 +56,15 @@ services:
     depends_on:
       - postgres
       - redis
+      - model-gateway
+      - memory-engine
+      - rsi-engine
+      - cognitive-engine
+      - tool-execution-engine
+      - workflow-engine
+      - policy-engine
+      - evaluation-engine
+      - device-gateway
     volumes:
       - ./services/api-gateway:/app
     command: uvicorn synthos_api_gateway.main:app --host 0.0.0.0 --port 8000 --reload
@@ -145,6 +154,67 @@ services:
     volumes:
       - ./services/tool-execution-engine:/app
     command: uvicorn synthos_tool_execution_engine.main:app --host 0.0.0.0 --port 8006 --reload
+
+  workflow-engine:
+    build:
+      context: ./services/workflow-engine
+      dockerfile: Dockerfile
+    container_name: synthos-workflow-engine
+    ports:
+      - "8007:8007"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    depends_on:
+      - redis
+    volumes:
+      - ./services/workflow-engine:/app
+    command: uvicorn synthos_workflow_engine.main:app --host 0.0.0.0 --port 8007 --reload
+
+  policy-engine:
+    build:
+      context: ./services/policy-engine
+      dockerfile: Dockerfile
+    container_name: synthos-policy-engine
+    ports:
+      - "8008:8008"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./services/policy-engine:/app
+    command: uvicorn synthos_policy_engine.main:app --host 0.0.0.0 --port 8008 --reload
+
+  evaluation-engine:
+    build:
+      context: ./services/evaluation-engine
+      dockerfile: Dockerfile
+    container_name: synthos-evaluation-engine
+    ports:
+      - "8009:8009"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./services/evaluation-engine:/app
+    command: uvicorn synthos_evaluation_engine.main:app --host 0.0.0.0 --port 8009 --reload
+
+  device-gateway:
+    build:
+      context: ./services/device-gateway
+      dockerfile: Dockerfile
+    container_name: synthos-device-gateway
+    ports:
+      - "8010:8010"
+      - "8011:8011"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./services/device-gateway:/app
+    command: uvicorn synthos_device_gateway.main:app --host 0.0.0.0 --port 8010 --reload
 
 volumes:
   postgres_data:

@@ -1,0 +1,252 @@
+version: '3.8'
+
+# Production configuration overrides for Synthos-OS
+# This file extends docker-compose.yml with production-specific settings
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  redis:
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  ollama:
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+
+  api-gateway:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  model-gateway:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  memory-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=postgresql+asyncpg://synthos:${POSTGRES_PASSWORD}@postgres:5432/synthos_os
+      - REDIS_URL=redis://redis:6379/0
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  rsi-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  cognitive-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  tool-execution-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  workflow-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  policy-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  evaluation-engine:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  device-gateway:
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

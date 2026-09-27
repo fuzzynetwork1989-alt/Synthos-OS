@@ -1,0 +1,21 @@
+[project]
+name = "synthos-memory-engine"
+version = "0.1.0"
+description = "Memory Engine for Synthos-OS"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "asyncpg>=0.29.0",
+    "aiosqlite>=0.19.0",
+    "redis>=5.0.0",
+    "aioredis>=2.0.1",
+    "python-dotenv>=1.0.0",
+    "structlog>=23.2.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

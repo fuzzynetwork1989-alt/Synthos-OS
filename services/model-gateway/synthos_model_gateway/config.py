@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     app_name: str = "Synthos Model Gateway"
     app_version: str = "0.1.0"
     environment: str = "development"
-    debug: bool = True
+    model_debug: bool = True
     
     # Server
     host: str = "0.0.0.0"

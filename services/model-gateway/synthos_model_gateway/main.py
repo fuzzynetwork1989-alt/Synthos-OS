@@ -60,7 +60,7 @@ app = FastAPI(
     version=settings.app_version,
     description="Model Gateway for Synthos-OS - Routes requests to multiple model providers",
     lifespan=lifespan,
-    debug=settings.debug,
+    debug=settings.model_debug,
 )
 
 # Configure CORS
@@ -214,6 +214,6 @@ if __name__ == "__main__":
         "synthos_model_gateway.main:app",
         host=settings.host,
         port=settings.port,
-        reload=settings.debug,
-        workers=settings.workers if not settings.debug else 1,
+        reload=settings.model_debug,
+        workers=settings.workers if not settings.model_debug else 1,
     )
