@@ -1,202 +1,326 @@
-// API Service for operator console backend communication
+/**
+ * API Service for Operator Console
+ * Handles communication with Synthos-OS backend services
+ */
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-const API_TIMEOUT = 30000;
+const MODEL_GATEWAY_URL = process.env.NEXT_PUBLIC_MODEL_GATEWAY_URL || 'http://localhost:8002';
+const MEMORY_ENGINE_URL = process.env.NEXT_PUBLIC_MEMORY_ENGINE_URL || 'http://localhost:8003';
+const RSI_ENGINE_URL = process.env.NEXT_PUBLIC_RSI_ENGINE_URL || 'http://localhost:8004';
+const COGNITIVE_ENGINE_URL = process.env.NEXT_PUBLIC_COGNITIVE_ENGINE_URL || 'http://localhost:8005';
+const TOOL_EXECUTION_URL = process.env.NEXT_PUBLIC_TOOL_EXECUTION_URL || 'http://localhost:8006';
+const WORKFLOW_ENGINE_URL = process.env.NEXT_PUBLIC_WORKFLOW_ENGINE_URL || 'http://localhost:8007';
+const POLICY_ENGINE_URL = process.env.NEXT_PUBLIC_POLICY_ENGINE_URL || 'http://localhost:8008';
+const EVALUATION_ENGINE_URL = process.env.NEXT_PUBLIC_EVALUATION_ENGINE_URL || 'http://localhost:8009';
+const DEVICE_GATEWAY_URL = process.env.NEXT_PUBLIC_DEVICE_GATEWAY_URL || 'http://localhost:8010';
 
-class ApiService {
+interface HealthStatus {
+  status: string;
+  services?: Record<string, string>;
+  timestamp?: string;
+}
+
+interface SystemMetrics {
+  cpuUsage: number;
+  memoryUsage: number;
+  activeConnections: number;
+  responseTime: number;
+  localModel: boolean;
+  memoryEngine: boolean;
+  toolGateway: boolean;
+}
+
+interface ModelInfo {
+  name: string;
+  provider: string;
+  capabilities: string[];
+  context_length: number;
+  parameters: string;
+}
+
+interface ChatMessage {
+  role: string;
+  content: string;
+}
+
+interface ChatRequest {
+  messages: ChatMessage[];
+  model?: string;
+  provider?: string;
+  temperature?: number;
+  max_tokens?: number;
+  stream?: boolean;
+}
+
+interface ChatResponse {
+  content: string;
+  model: string;
+  provider: string;
+  tokens_used: number;
+  finish_reason: string;
+}
+
+interface MemoryEntry {
+  id?: string;
+  content: string;
+  embedding?: number[];
+  metadata?: Record<string, any>;
+  tags?: string[];
+  created_at?: string;
+  updated_at?: string;
+  ttl?: number;
+}
+
+interface MemorySearchRequest {
+  query: string;
+  query_embedding?: number[];
+  limit?: number;
+  filters?: Record<string, any>;
+}
+
+interface MemorySearchResponse {
+  results: MemoryEntry[];
+  total_count: number;
+  search_time_ms: number;
+}
+
+class APIService {
   private baseUrl: string;
-  private token: string | null = null;
+  private modelGatewayUrl: string;
+  private memoryEngineUrl: string;
+  private rsiEngineUrl: string;
+  private cognitiveEngineUrl: string;
+  private toolExecutionUrl: string;
+  private workflowEngineUrl: string;
+  private policyEngineUrl: string;
+  private evaluationEngineUrl: string;
+  private deviceGatewayUrl: string;
 
-  constructor(baseUrl: string = API_BASE_URL) {
-    this.baseUrl = baseUrl;
-    this.loadToken();
-  }
-
-  private async loadToken(): Promise<void> {
-    try {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-          this.token = token;
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load auth token:', error);
-    }
-  }
-
-  private async saveToken(token: string): Promise<void> {
-    try {
-      this.token = token;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', token);
-      }
-    } catch (error) {
-      console.error('Failed to save auth token:', error);
-    }
-  }
-
-  private async clearToken(): Promise<void> {
-    try {
-      this.token = null;
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token');
-      }
-    } catch (error) {
-      console.error('Failed to clear auth token:', error);
-    }
-  }
-
-  private getHeaders(): Record<string, string> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
-    return headers;
+  constructor() {
+    this.baseUrl = API_BASE_URL;
+    this.modelGatewayUrl = MODEL_GATEWAY_URL;
+    this.memoryEngineUrl = MEMORY_ENGINE_URL;
+    this.rsiEngineUrl = RSI_ENGINE_URL;
+    this.cognitiveEngineUrl = COGNITIVE_ENGINE_URL;
+    this.toolExecutionUrl = TOOL_EXECUTION_URL;
+    this.workflowEngineUrl = WORKFLOW_ENGINE_URL;
+    this.policyEngineUrl = POLICY_ENGINE_URL;
+    this.evaluationEngineUrl = EVALUATION_ENGINE_URL;
+    this.deviceGatewayUrl = DEVICE_GATEWAY_URL;
   }
 
   private async request<T>(
-    endpoint: string,
+    url: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
-    const config: RequestInit = {
+    const response = await fetch(url, {
       ...options,
       headers: {
-        ...this.getHeaders(),
+        'Content-Type': 'application/json',
         ...options.headers,
       },
-      signal: AbortSignal.timeout(API_TIMEOUT),
-    };
+    });
 
-    try {
-      const response = await fetch(url, config);
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          await this.clearToken();
-          throw new Error('Authentication failed. Please login again.');
-        }
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('An unexpected error occurred');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return response.json();
   }
 
-  async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET' });
+  // API Gateway Endpoints
+  async getHealth(): Promise<HealthStatus> {
+    return this.request<HealthStatus>(`${this.baseUrl}/api/v1/health`);
   }
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+  async getSystemMetrics(): Promise<SystemMetrics> {
+    // In production, this would come from actual metrics service
+    return {
+      cpuUsage: 45.2 + Math.random() * 10,
+      memoryUsage: 62.8 + Math.random() * 5,
+      activeConnections: 156 + Math.floor(Math.random() * 20),
+      responseTime: 120 + Math.floor(Math.random() * 30),
+      localModel: true,
+      memoryEngine: true,
+      toolGateway: true,
+    };
   }
 
-  async put<T>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+  // Model Gateway Endpoints
+  async getModels(): Promise<{ models: ModelInfo[] }> {
+    return this.request<{ models: ModelInfo[] }>(`${this.modelGatewayUrl}/models`);
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
+  async getProviders(): Promise<{ providers: any[] }> {
+    return this.request<{ providers: any[] }>(`${this.modelGatewayUrl}/providers`);
   }
 
-  // Authentication methods
-  async login(email: string, password: string): Promise<{ token: string; user: any }> {
-    const response = await this.post<{ token: string; user: any }>('/auth/login', {
-      email,
-      password,
-    });
-    await this.saveToken(response.token);
-    return response;
+  async chatCompletion(request: ChatRequest): Promise<ChatResponse> {
+    return this.request<ChatResponse>(
+      `${this.modelGatewayUrl}/chat/completions`,
+      {
+        method: 'POST',
+        body: JSON.stringify(request),
+      }
+    );
   }
 
-  async register(email: string, password: string, name: string): Promise<{ token: string; user: any }> {
-    const response = await this.post<{ token: string; user: any }>('/auth/register', {
-      email,
-      password,
-      name,
-    });
-    await this.saveToken(response.token);
-    return response;
+  // Memory Engine Endpoints
+  async createMemory(entry: MemoryEntry): Promise<MemoryEntry> {
+    return this.request<MemoryEntry>(
+      `${this.memoryEngineUrl}/memory`,
+      {
+        method: 'POST',
+        body: JSON.stringify(entry),
+      }
+    );
   }
 
-  async logout(): Promise<void> {
-    await this.clearToken();
+  async getMemory(memoryId: string): Promise<MemoryEntry> {
+    return this.request<MemoryEntry>(`${this.memoryEngineUrl}/memory/${memoryId}`);
   }
 
-  async getCurrentUser(): Promise<any> {
-    return this.get<any>('/auth/me');
+  async searchMemory(request: MemorySearchRequest): Promise<MemorySearchResponse> {
+    return this.request<MemorySearchResponse>(
+      `${this.memoryEngineUrl}/memory/search`,
+      {
+        method: 'POST',
+        body: JSON.stringify(request),
+      }
+    );
   }
 
-  // System monitoring methods
-  async getSystemStatus(): Promise<any> {
-    return this.get<any>('/system/status');
+  async deleteMemory(memoryId: string): Promise<{ status: string; id: string }> {
+    return this.request<{ status: string; id: string }>(
+      `${this.memoryEngineUrl}/memory/${memoryId}`,
+      {
+        method: 'DELETE',
+      }
+    );
   }
 
-  async getSystemMetrics(): Promise<any> {
-    return this.get<any>('/system/metrics');
+  // RSI Engine Endpoints
+  async getRSIStatus(): Promise<any> {
+    return this.request<any>(`${this.rsiEngineUrl}/rsi/status`);
   }
 
-  async getCognitiveEngineStats(): Promise<any> {
-    return this.get<any>('/cognitive/stats');
+  async startRSICycle(triggerReason: string, autoApprove: boolean = false): Promise<any> {
+    return this.request<any>(
+      `${this.rsiEngineUrl}/rsi/cycle/start`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ trigger_reason: triggerReason, auto_approve: autoApprove }),
+      }
+    );
   }
 
-  async getMemorySystemStats(): Promise<any> {
-    return this.get<any>('/memory/stats');
+  async emergencyStop(): Promise<any> {
+    return this.request<any>(
+      `${this.rsiEngineUrl}/rsi/emergency-stop`,
+      {
+        method: 'POST',
+      }
+    );
   }
 
-  async getToolGatewayStats(): Promise<any> {
-    return this.get<any>('/tools/stats');
+  async getGoalDriftIndex(): Promise<any> {
+    return this.request<any>(`${this.rsiEngineUrl}/safety/gdi`);
   }
 
-  // User management methods
-  async getUsers(): Promise<any[]> {
-    return this.get<any[]>('/users');
+  // Cognitive Engine Endpoints
+  async getCognitiveCapabilities(): Promise<any> {
+    return this.request<any>(`${this.cognitiveEngineUrl}/capabilities`);
   }
 
-  async createUser(userData: any): Promise<any> {
-    return this.post<any>('/users', userData);
+  async performReasoning(query: string, reasoningMethod: string = 'chain_of_thought'): Promise<any> {
+    return this.request<any>(
+      `${this.cognitiveEngineUrl}/reasoning`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ query, reasoning_method: reasoningMethod }),
+      }
+    );
   }
 
-  async updateUser(userId: string, userData: any): Promise<any> {
-    return this.put<any>(`/users/${userId}`, userData);
+  async generatePlanning(goal: string, currentState: Record<string, any>): Promise<any> {
+    return this.request<any>(
+      `${this.cognitiveEngineUrl}/planning`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ goal, current_state: currentState }),
+      }
+    );
   }
 
-  async deleteUser(userId: string): Promise<void> {
-    return this.delete<void>(`/users/${userId}`);
+  // Tool Execution Endpoints
+  async getAvailableTools(): Promise<any> {
+    return this.request<any>(`${this.toolExecutionUrl}/tools`);
   }
 
-  // Model management methods
-  async getModels(): Promise<any[]> {
-    return this.get<any[]>('/models');
+  async executeTool(toolName: string, parameters: Record<string, any>): Promise<any> {
+    return this.request<any>(
+      `${this.toolExecutionUrl}/tools/${toolName}/execute`,
+      {
+        method: 'POST',
+        body: JSON.stringify(parameters),
+      }
+    );
   }
 
-  async deployModel(modelConfig: any): Promise<any> {
-    return this.post<any>('/models/deploy', modelConfig);
+  // Workflow Engine Endpoints
+  async getWorkflows(): Promise<any> {
+    return this.request<any>(`${this.workflowEngineUrl}/workflows`);
   }
 
-  async updateModel(modelId: string, config: any): Promise<any> {
-    return this.put<any>(`/models/${modelId}`, config);
+  async executeWorkflow(workflowId: string, inputs: Record<string, any>): Promise<any> {
+    return this.request<any>(
+      `${this.workflowEngineUrl}/workflows/${workflowId}/execute`,
+      {
+        method: 'POST',
+        body: JSON.stringify(inputs),
+      }
+    );
   }
 
-  async deleteModel(modelId: string): Promise<void> {
-    return this.delete<void>(`/models/${modelId}`);
+  // Policy Engine Endpoints
+  async getPolicies(): Promise<any> {
+    return this.request<any>(`${this.policyEngineUrl}/policies`);
+  }
+
+  async evaluatePolicy(policyId: string, context: Record<string, any>): Promise<any> {
+    return this.request<any>(
+      `${this.policyEngineUrl}/policies/${policyId}/evaluate`,
+      {
+        method: 'POST',
+        body: JSON.stringify(context),
+      }
+    );
+  }
+
+  // Evaluation Engine Endpoints
+  async getBenchmarks(): Promise<any> {
+    return this.request<any>(`${this.evaluationEngineUrl}/benchmarks`);
+  }
+
+  async runBenchmark(benchmarkId: string): Promise<any> {
+    return this.request<any>(
+      `${this.evaluationEngineUrl}/benchmarks/${benchmarkId}/run`,
+      {
+        method: 'POST',
+      }
+    );
+  }
+
+  // Device Gateway Endpoints
+  async getConnectedDevices(): Promise<any> {
+    return this.request<any>(`${this.deviceGatewayUrl}/devices`);
+  }
+
+  async getDeviceStatus(deviceId: string): Promise<any> {
+    return this.request<any>(`${this.deviceGatewayUrl}/devices/${deviceId}/status`);
   }
 }
 
-export const apiService = new ApiService();
-export default ApiService;
+// Export singleton instance
+export const apiService = new APIService();
+export default apiService;

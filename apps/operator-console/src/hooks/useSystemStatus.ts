@@ -29,7 +29,7 @@ export function useSystemStatus() {
     const fetchStatus = async () => {
       try {
         setLoading(true);
-        const systemStatus = await apiService.getSystemStatus();
+        const systemStatus = await apiService.getSystemMetrics();
         setStatus(systemStatus);
         setError(null);
       } catch (err) {

@@ -7,6 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "webpack --mode production",
+    "build:quest": "node build-quest.js build",
+    "deploy:quest": "node build-quest.js deploy",
+    "store:quest": "node build-quest.js store",
     "test": "jest",
     "lint": "eslint src/"
   },

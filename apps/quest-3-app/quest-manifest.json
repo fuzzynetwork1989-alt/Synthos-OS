@@ -1,0 +1,186 @@
+{
+  "manifest_version": 1,
+  "app_id": "com.synthos.xr",
+  "app_name": "SynthOS XR",
+  "version": "1.0.0",
+  "version_code": 1,
+  "min_sdk_version": "1.0.0",
+  "target_sdk_version": "2.0.0",
+  "package_type": "apk",
+
+  "display_name": {
+    "en-US": "SynthOS XR",
+    "default": "SynthOS XR"
+  },
+
+  "description": {
+    "en-US": "First-of-its-kind spatial computing experience with AI-powered spatial assistance for Meta Quest 3",
+    "default": "First-of-its-kind spatial computing experience with AI-powered spatial assistance for Meta Quest 3"
+  },
+
+  "category": "Productivity",
+  "subcategory": "Utilities",
+
+  "keywords": [
+    "AI",
+    "spatial",
+    "assistant",
+    "XR",
+    "AR",
+    "VR",
+    "productivity",
+    "voice",
+    "gesture"
+  ],
+
+  "icon": "assets/icons/icon-512.png",
+  "banner": "assets/images/banner-1200x630.png",
+
+  "device_target": {
+    "min_platform": "quest3",
+    "supported_platforms": ["quest3"]
+  },
+
+  "capabilities": {
+    "hand_tracking": {
+      "enabled": true,
+      "version": "2.0"
+    },
+    "eye_tracking": {
+      "enabled": true,
+      "version": "1.0"
+    },
+    "passthrough": {
+      "enabled": true,
+      "type": "rgba"
+    },
+    "spatial_anchors": {
+      "enabled": true,
+      "version": "1.0"
+    },
+    "scene_understanding": {
+      "enabled": true,
+      "version": "1.0"
+    },
+    "spatial_audio": {
+      "enabled": true,
+      "hrtf": true
+    },
+    "body_tracking": {
+      "enabled": false
+    },
+    "face_tracking": {
+      "enabled": false
+    }
+  },
+
+  "permissions": [
+    "INTERNET",
+    "RECORD_AUDIO",
+    "MICROPHONE",
+    "CAMERA",
+    "ACCESS_NETWORK_STATE",
+    "READ_EXTERNAL_STORAGE",
+    "WRITE_EXTERNAL_STORAGE"
+  ],
+
+  "features": {
+    "orientation": {
+      "landscape": true,
+      "portrait": false
+    },
+    "high_refresh_rate": {
+      "90hz": true,
+      "120hz": true
+    }
+  },
+
+  "performance": {
+    "target_fps": 90,
+    "min_fps": 72,
+    "max_frame_time": 13.89,
+    "allow_power_saving": true,
+    "adaptive_quality": true
+  },
+
+  "memory": {
+    "min_ram": 2048,
+    "recommended_ram": 4096,
+    "max_ram_usage": 2048
+  },
+
+  "storage": {
+    "min_storage": 500,
+    "recommended_storage": 1000,
+    "app_size_limit": 500
+  },
+
+  "audio": {
+    "sample_rate": 48000,
+    "channels": 2,
+    "spatial_audio": true
+  },
+
+  "graphics": {
+    "rendering_api": "OpenGL ES 3.2",
+    "multisampling": 4,
+    "texture_compression": "ASTC",
+    "color_space": "sRGB"
+  },
+
+  "network": {
+    "required": true,
+    "offline_mode": "limited"
+  },
+
+  "store_listing": {
+    "short_description": {
+      "en-US": "AI-powered spatial assistant for Quest 3",
+      "default": "AI-powered spatial assistant for Quest 3"
+    },
+    "screenshots": [
+      "assets/screenshots/screenshot1.png",
+      "assets/screenshots/screenshot2.png",
+      "assets/screenshots/screenshot3.png",
+      "assets/screenshots/screenshot4.png",
+      "assets/screenshots/screenshot5.png"
+    ],
+    "age_rating": "Teen",
+    "content_ratings": {
+      "violence": "None",
+      "sexual_content": "None",
+      "strong_language": "None",
+      "controlled_substances": "None",
+      "gambling": "None"
+    }
+  },
+
+  "privacy": {
+    "privacy_policy_url": "https://synthos.ai/privacy",
+    "terms_of_service_url": "https://synthos.ai/terms",
+    "data_collection": {
+      "enabled": false,
+      "types": []
+    }
+  },
+
+  "developer": {
+    "name": "SynthOS Team",
+    "contact_email": "support@synthos.ai",
+    "website": "https://synthos.ai",
+    "support_url": "https://synthos.ai/support"
+  },
+
+  "build": {
+    "minify": true,
+    "obfuscate": false,
+    "source_maps": false,
+    "split_chunks": true
+  },
+
+  "deployment": {
+    "update_strategy": "auto",
+    "required_update": false,
+    "min_compatible_version": "1.0.0"
+  }
+}

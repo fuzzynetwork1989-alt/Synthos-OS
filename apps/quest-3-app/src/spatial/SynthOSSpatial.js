@@ -4,11 +4,13 @@
  */
 
 const EventEmitter = require('eventemitter3');
+const { MetaSpatialSDK } = require('./MetaSpatialSDK');
 
 class SynthOSSpatial extends EventEmitter {
   constructor(performanceManager) {
     super();
     this.performance = performanceManager;
+    this.metaSDK = new MetaSpatialSDK({ useSimulation: true });
     this.passthrough = null;
     this.handTracking = null;
     this.eyeTracking = null;
@@ -22,6 +24,9 @@ class SynthOSSpatial extends EventEmitter {
     console.log('📍 Initializing spatial computing subsystems...');
 
     try {
+      // Initialize Meta Spatial SDK
+      await this.metaSDK.initialize();
+
       // Initialize passthrough
       await this.initializePassthrough();
 
@@ -48,30 +53,25 @@ class SynthOSSpatial extends EventEmitter {
 
   async initializePassthrough() {
     console.log('📷 Initializing passthrough...');
-    
-    // In production, this would use Meta Spatial SDK
+
+    await this.metaSDK.startPassthrough();
+
     this.passthrough = {
       enabled: true,
       quality: 'high',
       depthEnabled: true,
       segmentationEnabled: true,
-      
+
       async getEnvironment() {
-        // Simulated environment data
-        return {
-          roomBounds: this.simulateRoomBounds(),
-          lighting: this.simulateLighting(),
-          surfaces: this.simulateSurfaces()
-        };
+        return await this.metaSDK.getEnvironment();
       },
 
       async getObjects() {
-        // Simulated object detection
-        return this.simulateObjects();
+        return await this.metaSDK.getObjects();
       },
 
       async getDepthMap() {
-        // Simulated depth map
+        // Depth map would come from SDK in production
         return this.simulateDepthMap();
       }
     };
@@ -81,19 +81,20 @@ class SynthOSSpatial extends EventEmitter {
 
   async initializeHandTracking() {
     console.log('👋 Initializing hand tracking...');
-    
+
+    await this.metaSDK.startHandTracking();
+
     this.handTracking = {
       enabled: true,
       gestures: ['pinch', 'point', 'grab', 'thumbs-up', 'wave'],
       confidence: 0.8,
-      
+
       async getHands() {
-        // Simulated hand tracking data
-        return this.simulateHands();
+        return await this.metaSDK.getHands();
       },
 
       async getGesture() {
-        // Simulated gesture recognition
+        // Gesture recognition would be implemented in production
         return this.simulateGesture();
       }
     };
@@ -103,20 +104,21 @@ class SynthOSSpatial extends EventEmitter {
 
   async initializeEyeTracking() {
     console.log('👁️ Initializing eye tracking...');
-    
+
+    await this.metaSDK.startEyeTracking();
+
     this.eyeTracking = {
       enabled: true,
       gazePoint: true,
       fixation: true,
       saccade: true,
-      
+
       async getGaze() {
-        // Simulated eye tracking data
-        return this.simulateGaze();
+        return await this.metaSDK.getGaze();
       },
 
       async getFixationPoint() {
-        // Simulated fixation point
+        // Fixation point analysis would be implemented in production
         return this.simulateFixationPoint();
       }
     };
@@ -126,28 +128,21 @@ class SynthOSSpatial extends EventEmitter {
 
   async initializeSpatialAnchors() {
     console.log('⚓ Initializing spatial anchors...');
-    
+
     this.spatialAnchors = {
       enabled: true,
       anchors: new Map(),
-      
+
       async createAnchor(position, rotation) {
-        const anchorId = `anchor_${Date.now()}`;
-        this.spatialAnchors.anchors.set(anchorId, {
-          id: anchorId,
-          position,
-          rotation,
-          timestamp: Date.now()
-        });
-        return anchorId;
+        return await this.metaSDK.createAnchor(position, rotation);
       },
 
       async getAnchor(anchorId) {
-        return this.spatialAnchors.anchors.get(anchorId);
+        return await this.metaSDK.getAnchor(anchorId);
       },
 
       async removeAnchor(anchorId) {
-        return this.spatialAnchors.anchors.delete(anchorId);
+        return await this.metaSDK.removeAnchor(anchorId);
       }
     };
 
@@ -156,18 +151,16 @@ class SynthOSSpatial extends EventEmitter {
 
   async initializeSceneUnderstanding() {
     console.log('🏠 Initializing scene understanding...');
-    
+
     this.sceneUnderstanding = {
       enabled: true,
-      
+
       async analyzeScene() {
-        // Simulated scene analysis
-        return this.simulateSceneAnalysis();
+        return await this.metaSDK.analyzeScene();
       },
 
       async classifySurfaces() {
-        // Simulated surface classification
-        return this.simulateSurfaceClassification();
+        return await this.metaSDK.classifySurfaces();
       }
     };
 
@@ -206,90 +199,19 @@ class SynthOSSpatial extends EventEmitter {
     };
   }
 
-  // Simulation methods (replace with actual Meta Spatial SDK calls)
-  simulateRoomBounds() {
-    return {
-      dimensions: { width: 5.0, height: 2.5, depth: 4.0 },
-      center: { x: 0, y: 1.25, z: 0 }
-    };
-  }
-
-  simulateLighting() {
-    return {
-      ambient: 0.6,
-      directional: 0.8,
-      color: { r: 1.0, g: 0.95, b: 0.9 }
-    };
-  }
-
-  simulateSurfaces() {
-    return [
-      { type: 'floor', normal: { x: 0, y: 1, z: 0 }, area: 20.0 },
-      { type: 'wall', normal: { x: 1, y: 0, z: 0 }, area: 10.0 },
-      { type: 'wall', normal: { x: -1, y: 0, z: 0 }, area: 10.0 },
-      { type: 'wall', normal: { x: 0, y: 0, z: 1 }, area: 12.5 },
-      { type: 'wall', normal: { x: 0, y: 0, z: -1 }, area: 12.5 }
-    ];
-  }
-
-  simulateObjects() {
-    return [
-      { id: 'obj_1', type: 'table', position: { x: 0, y: 0.75, z: -1.5 }, confidence: 0.95 },
-      { id: 'obj_2', type: 'chair', position: { x: -1.0, y: 0.5, z: -1.0 }, confidence: 0.88 },
-      { id: 'obj_3', type: 'monitor', position: { x: 0, y: 1.2, z: -2.0 }, confidence: 0.92 }
-    ];
-  }
-
+  // Remaining simulation methods for features not yet implemented in SDK
   simulateDepthMap() {
     return {
       width: 1920,
       height: 1080,
-      data: new Float32Array(1920 * 1080).fill(1.0) // Simulated depth data
+      data: new Float32Array(1920 * 1080).fill(1.0)
     };
-  }
-
-  simulateHands() {
-    return [
-      {
-        id: 'hand_left',
-        position: { x: -0.3, y: 0.5, z: -0.5 },
-        rotation: { x: 0, y: 0, z: 0, w: 1 },
-        fingers: this.simulateFingers(),
-        confidence: 0.92
-      },
-      {
-        id: 'hand_right',
-        position: { x: 0.3, y: 0.5, z: -0.5 },
-        rotation: { x: 0, y: 0, z: 0, w: 1 },
-        fingers: this.simulateFingers(),
-        confidence: 0.89
-      }
-    ];
-  }
-
-  simulateFingers() {
-    return [
-      { name: 'thumb', extended: true, position: { x: 0, y: 0, z: 0 } },
-      { name: 'index', extended: true, position: { x: 0, y: 0, z: 0 } },
-      { name: 'middle', extended: false, position: { x: 0, y: 0, z: 0 } },
-      { name: 'ring', extended: false, position: { x: 0, y: 0, z: 0 } },
-      { name: 'pinky', extended: false, position: { x: 0, y: 0, z: 0 } }
-    ];
   }
 
   simulateGesture() {
     return {
       type: 'point',
       confidence: 0.85,
-      timestamp: Date.now()
-    };
-  }
-
-  simulateGaze() {
-    return {
-      point: { x: 0, y: 0, z: -2.0 },
-      direction: { x: 0, y: 0, z: -1 },
-      confidence: 0.91,
       timestamp: Date.now()
     };
   }
@@ -302,27 +224,14 @@ class SynthOSSpatial extends EventEmitter {
     };
   }
 
-  simulateSceneAnalysis() {
-    return {
-      roomType: 'office',
-      confidence: 0.87,
-      features: ['desk', 'chair', 'monitor', 'keyboard']
-    };
-  }
-
-  simulateSurfaceClassification() {
-    return [
-      { position: { x: 0, y: 0, z: 0 }, type: 'floor', confidence: 0.95 },
-      { position: { x: 0, y: 0.75, z: -1.5 }, type: 'table', confidence: 0.92 }
-    ];
-  }
-
   async shutdown() {
     console.log('🛑 Shutting down spatial computing...');
-    
+
+    await this.metaSDK.shutdown();
+
     this.isInitialized = false;
     this.spatialAnchors.anchors.clear();
-    
+
     console.log('✅ Spatial computing shut down');
   }
 }
