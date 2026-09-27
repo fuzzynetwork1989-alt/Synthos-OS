@@ -11,7 +11,7 @@ on:
 jobs:
   code-scan:
     runs-on: ubuntu-latest
-    if: false  # Disabled until services are implemented
+    if: true  # Enabled for RSI Engine (fully implemented)
     steps:
       - uses: actions/checkout@v4
       - name: Initialize CodeQL
@@ -23,15 +23,17 @@ jobs:
 
   dependency-review:
     runs-on: ubuntu-latest
-    if: false  # Disabled until dependencies are added
+    if: true  # Enabled for RSI Engine (has dependencies in pyproject.toml)
     steps:
       - uses: actions/checkout@v4
       - name: Dependency Review
         uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: moderate
 
   snyk-scan:
     runs-on: ubuntu-latest
-    if: false  # Disabled until services are implemented
+    if: true  # Enabled for RSI Engine (fully implemented)
     steps:
       - uses: actions/checkout@v4
       - name: Run Snyk to check for vulnerabilities

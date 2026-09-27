@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U synthos"]
       interval: 10s
@@ -40,6 +41,110 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_NUM_THREAD=4
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: synthos-api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./services/api-gateway:/app
+    command: uvicorn synthos_api_gateway.main:app --host 0.0.0.0 --port 8000 --reload
+
+  model-gateway:
+    build:
+      context: ./services/model-gateway
+      dockerfile: Dockerfile
+    container_name: synthos-model-gateway
+    ports:
+      - "8002:8002"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    volumes:
+      - ./services/model-gateway:/app
+    command: uvicorn synthos_model_gateway.main:app --host 0.0.0.0 --port 8002 --reload
+
+  memory-engine:
+    build:
+      context: ./services/memory-engine
+      dockerfile: Dockerfile
+    container_name: synthos-memory-engine
+    ports:
+      - "8003:8003"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DATABASE_URL=postgresql+asyncpg://synthos:synthos_dev_password@postgres:5432/synthos_os
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./services/memory-engine:/app
+    command: uvicorn synthos_memory_engine.main:app --host 0.0.0.0 --port 8003 --reload
+
+  rsi-engine:
+    build:
+      context: ./services/rsi-engine
+      dockerfile: Dockerfile
+    container_name: synthos-rsi-engine
+    ports:
+      - "8004:8004"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./services/rsi-engine:/app
+    command: uvicorn synthos_rsi_engine.main:app --host 0.0.0.0 --port 8004 --reload
+
+  cognitive-engine:
+    build:
+      context: ./services/cognitive-engine
+      dockerfile: Dockerfile
+    container_name: synthos-cognitive-engine
+    ports:
+      - "8005:8005"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - MODEL_GATEWAY_URL=http://model-gateway:8002
+      - MEMORY_ENGINE_URL=http://memory-engine:8003
+    depends_on:
+      - model-gateway
+      - memory-engine
+    volumes:
+      - ./services/cognitive-engine:/app
+    command: uvicorn synthos_cognitive_engine.main:app --host 0.0.0.0 --port 8005 --reload
+
+  tool-execution-engine:
+    build:
+      context: ./services/tool-execution-engine
+      dockerfile: Dockerfile
+    container_name: synthos-tool-execution-engine
+    ports:
+      - "8006:8006"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./services/tool-execution-engine:/app
+    command: uvicorn synthos_tool_execution_engine.main:app --host 0.0.0.0 --port 8006 --reload
 
 volumes:
   postgres_data:

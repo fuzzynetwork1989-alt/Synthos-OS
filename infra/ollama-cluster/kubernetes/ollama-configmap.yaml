@@ -1,0 +1,201 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: synthos-ai
+  labels:
+    app: ollama
+    component: config
+data:
+  ollama.conf: |
+    # Ollama Configuration for Enhanced Super Brain
+    # Optimized for 1M-user scale with RSI integration
+
+    # Server Configuration
+    OLLAMA_HOST=0.0.0.0
+    OLLAMA_PORT=11434
+    OLLAMA_ORIGINS="*"
+
+    # Model Configuration
+    OLLAMA_MODELS=synthos-base-7b,synthos-enhanced-20b,synthos-ultimate-100b
+    OLLAMA_NUM_PARALLEL=4
+    OLLAMA_NUM_GPU=2
+    OLLAMA_GPU_MEMORY_FRACTION=0.9
+
+    # Performance Configuration
+    OLLAMA_LOAD_TIMEOUT=5m
+    OLLAMA_REQUEST_TIMEOUT=10m
+    OLLAMA_KEEP_ALIVE=30m
+    OLLAMA_MAX_QUEUE=512
+    OLLAMA_MAX_CONNECTIONS=1000
+
+    # RSI Integration Configuration
+    OLLAMA_RSI_ENABLED=true
+    OLLAMA_RSI_ENDPOINT=http://rsi-engine:8001
+    OLLAMA_RSI_CYCLE_INTERVAL=24h
+    OLLAMA_RSI_AUTO_APPROVE=false
+
+    # Model Sharding Configuration
+    OLLAMA_SHARDING_ENABLED=true
+    OLLAMA_SHARD_STRATEGY=round-robin
+    OLLAMA_SHARD_REPLICAS=4
+
+    # Cache Configuration
+    OLLAMA_CACHE_SIZE=100GB
+    OLLAMA_CACHE_TTL=24h
+    OLLAMA_CACHE_COMPRESSION=true
+
+    # Monitoring Configuration
+    OLLAMA_METRICS_ENABLED=true
+    OLLAMA_METRICS_PORT=9090
+    OLLAMA_LOG_LEVEL=info
+    OLLAMA_DEBUG=false
+
+    # Security Configuration
+    OLLAMA_AUTH_ENABLED=true
+    OLLAMA_AUTH_TYPE=jwt
+    OLLAMA_RATE_LIMIT=1000
+    OLLAMA_RATE_LIMIT_WINDOW=60
+
+  model-registry.yaml: |
+    # Model Registry for Synthos Model Family
+    models:
+      synthos-base-7b:
+        name: "synthos-base-7b"
+        version: "1.0.0"
+        size: "7B"
+        architecture: "transformer"
+        context_window: 32768
+        capabilities:
+          - text-generation
+          - reasoning
+          - code-generation
+          - multi-language
+        experts: 1
+        active_experts: 1
+        memory_requirement: "16GB"
+        gpu_requirement: 1
+        rsi_capability: "read-only"
+
+      synthos-enhanced-20b:
+        name: "synthos-enhanced-20b"
+        version: "1.0.0"
+        size: "20B"
+        architecture: "hybrid-moe-dense"
+        context_window: 131072
+        capabilities:
+          - text-generation
+          - advanced-reasoning
+          - emotional-intelligence
+          - metacognition
+          - creative-thinking
+          - social-intelligence
+        experts: 8
+        active_experts: 2
+        memory_requirement: "32GB"
+        gpu_requirement: 2
+        rsi_capability: "suggestions"
+        expert_specialization:
+          - reasoning
+          - creative
+          - code
+          - knowledge
+          - emotional
+          - social
+          - memory
+          - safety
+
+      synthos-ultimate-100b:
+        name: "synthos-ultimate-100b"
+        version: "1.0.0"
+        size: "100B"
+        architecture: "advanced-moe"
+        context_window: 1048576
+        capabilities:
+          - full-rsi
+          - metacognition
+          - cross-modal
+          - spatial-reasoning
+          - temporal-reasoning
+          - causal-reasoning
+          - self-modification
+        experts: 16
+        active_experts: 4
+        memory_requirement: "128GB"
+        gpu_requirement: 8
+        rsi_capability: "full"
+        expert_specialization:
+          - meta-reasoning
+          - self-improvement
+          - cross-modal
+          - spatial
+          - temporal
+          - causal
+          - social
+          - creative
+          - safety
+          - performance
+          - memory
+          - learning
+          - communication
+          - strategy
+          - evaluation
+          - integration
+
+      synthos-mobile-3b:
+        name: "synthos-mobile-3b"
+        version: "1.0.0"
+        size: "3B"
+        architecture: "dense-optimized"
+        context_window: 8192
+        capabilities:
+          - mobile-assistant
+          - offline-processing
+          - low-latency
+          - privacy-preserving
+        experts: 1
+        active_experts: 1
+        memory_requirement: "4GB"
+        gpu_requirement: 0
+        rsi_capability: "client"
+        optimizations:
+          - quantization-4bit
+          - pruning
+          - knowledge-distillation
+
+  sharding-config.yaml: |
+    # Model Sharding Configuration
+    sharding:
+      enabled: true
+      strategy: "round-robin"
+      replicas: 4
+      
+      model_distribution:
+        synthos-base-7b:
+          shards: 2
+          replication_factor: 2
+          load_balancing: "least-connections"
+          
+        synthos-enhanced-20b:
+          shards: 4
+          replication_factor: 2
+          load_balancing: "weighted-response-time"
+          
+        synthos-ultimate-100b:
+          shards: 8
+          replication_factor: 3
+          load_balancing: "adaptive"
+          
+      health_check:
+        enabled: true
+        interval: 30s
+        timeout: 10s
+        unhealthy_threshold: 3
+        healthy_threshold: 2
+        
+      failover:
+        enabled: true
+        max_retries: 3
+        retry_delay: 1s
+        circuit_breaker: true
+        circuit_breaker_threshold: 5

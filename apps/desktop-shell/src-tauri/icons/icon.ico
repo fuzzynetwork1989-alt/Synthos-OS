@@ -1,0 +1,14 @@
+PLACEHOLDER_ICO_FILE
+
+This is a placeholder file. Replace with actual ICO icon before Windows distribution.
+
+For production, create a proper ICO icon using:
+- Multiple icon sizes embedded
+- Your brand design and colors
+- Windows design guidelines
+- Tools like ImageMagick or online converters
+
+ICO requirements:
+- Multiple sizes: 16x16, 32x32, 48x48, 256x256
+- Format: ICO (Windows icon format)
+- Design: Follow Windows design guidelines

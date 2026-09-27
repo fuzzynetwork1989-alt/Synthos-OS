@@ -1,0 +1,13 @@
+PLACEHOLDER_FAVICON_FILE
+
+This is a placeholder file. Replace with actual 16x16px PNG favicon before app store submission.
+
+For production, create a proper favicon using:
+- Simple, recognizable design
+- Works well at small sizes
+- Matches your brand identity
+
+Favicon requirements:
+- Size: 16x16 pixels (also create 32x32px and 192x192px versions)
+- Format: PNG
+- Design: Simple, high contrast

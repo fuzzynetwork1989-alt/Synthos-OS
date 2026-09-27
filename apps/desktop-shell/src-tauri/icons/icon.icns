@@ -1,0 +1,14 @@
+PLACEHOLDER_ICNS_FILE
+
+This is a placeholder file. Replace with actual ICNS icon before macOS distribution.
+
+For production, create a proper ICNS icon using:
+- Multiple icon sizes embedded
+- Your brand design and colors
+- Apple Human Interface Guidelines
+- Tools like iconutil or online converters
+
+ICNS requirements:
+- Multiple sizes: 16x16, 32x32, 128x128, 256x256, 512x512, 1024x1024
+- Format: ICNS (Apple icon format)
+- Design: Follow Apple's design guidelines

@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard
+  namespace: synthos
+data:
+  synthos-dashboard.json: |
+    {
+      "dashboard": {
+        "title": "Synthos-OS Overview",
+        "panels": [
+          {
+            "title": "Service Health",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "up{job='synthos-services'}"
+              }
+            ]
+          },
+          {
+            "title": "Request Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(http_requests_total[5m])"
+              }
+            ]
+          },
+          {
+            "title": "Memory Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes"
+              }
+            ]
+          },
+          {
+            "title": "CPU Usage",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total[5m])"
+              }
+            ]
+          },
+          {
+            "title": "RSI Cycles",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rsi_cycles_total"
+              }
+            ]
+          },
+          {
+            "title": "Goal Drift Index",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "goal_drift_index"
+              }
+            ]
+          }
+        ]
+      }
+    }

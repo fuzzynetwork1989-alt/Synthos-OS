@@ -1,0 +1,99 @@
+{
+  "autopilot_mode": {
+    "enabled": true,
+    "version": "6.3",
+    "description": "SYNOVA NEXUS AUTOPILOT MODE v6.3 - Ultimate Meta-Factory + Meta-Architect + LLM-Foundry v2 + VR-Native + Live Evals + Hybrid MoE-Distill + Multi-Agent Council",
+    "active_layers": [
+      "meta-factory",
+      "meta-architect", 
+      "llm-foundry",
+      "vr-native",
+      "live-benchmark",
+      "hybrid-moe-distill",
+      "multi-agent-council"
+    ],
+    "triggers": {
+      "BUILD": "Full-stack AI application development",
+      "ARCHITECT": "System architecture design and re-engineering",
+      "FOUNDRY": "LLM training and fine-tuning operations",
+      "AGENT": "Agent development and orchestration",
+      "IMPROVE": "System improvement and optimization"
+    },
+    "integration": {
+      "agents_md_compliance": true,
+      "rsi_integration": true,
+      "cicd_integration": true,
+      "safety_framework": true
+    },
+    "operating_principles": {
+      "preserve_unique_information": true,
+      "merge_duplicates": true,
+      "prefer_explicitness": true,
+      "produce_complete_artifacts": true,
+      "think_in_pipelines": true,
+      "prefer_production_readiness": true,
+      "prefer_modular_design": true,
+      "prefer_measurable_evaluation": true,
+      "prefer_iterative_improvement": true,
+      "treat_as_architecture_problem": true
+    }
+  },
+  "project_specific": {
+    "name": "Synthos-OS",
+    "repository": "Synthos-OS",
+    "system_type": "Next-Generation Cognitive, Agentic, and Self-Organizing AI Operating System",
+    "architecture_layers": 21,
+    "primary_goal": "Build a hybrid local/cloud AI operating platform with persistent memory, model routing, reasoning, planning, multimodal interaction, tools, governance, evaluation, deployment, and a future path toward HEICN, HSAIN, and Self-Organizing Intelligence"
+  },
+  "skills": {
+    "repository_specific": [
+      "rsi-cycle",
+      "synthos-validation", 
+      "autopilot-operations"
+    ],
+    "built_in": [
+      "link-workspace-packages",
+      "microsoft-foundry",
+      "monitor-ci",
+      "nx-generate",
+      "nx-import",
+      "nx-plugins",
+      "nx-run-tasks",
+      "nx-workspace",
+      "devin-cli",
+      "declarative-repo-setup",
+      "upload-secrets"
+    ]
+  },
+  "cicd_status": {
+    "python_formatting": "enabled (RSI Engine)",
+    "python_linting": "enabled (RSI Engine)",
+    "python_typing": "enabled (RSI Engine)",
+    "code_scanning": "enabled (RSI Engine)",
+    "snyk_scanning": "enabled (RSI Engine)",
+    "dependency_review": "enabled (RSI Engine)",
+    "secret_scanning": "always active",
+    "dependency_scanning": "always active"
+  },
+  "rsi_status": {
+    "implemented": true,
+    "components": [
+      "RSI Coordinator",
+      "State Manager",
+      "Mutation Generator",
+      "Benchmark Runner",
+      "Gatekeeper (10 safety layers)",
+      "Goal Drift Index",
+      "Constitutional Constraints (19 rules)",
+      "Proposal Manager",
+      "Audit Logger"
+    ],
+    "api_endpoints": 9,
+    "safety_framework": "comprehensive"
+  },
+  "test_coverage": {
+    "unit_tests": "structural validation tests created",
+    "integration_tests": "API structure tests created",
+    "e2e_tests": "pending implementation"
+  }
+}

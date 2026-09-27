@@ -1,0 +1,14 @@
+PLACEHOLDER_256x256_ICON_FILE
+
+This is a placeholder file. Replace with actual 256x256px PNG icon before distribution.
+
+For production, create a proper app icon using:
+- Your brand design and colors
+- Simple, recognizable at small sizes
+- High contrast for visibility
+- Follow platform-specific guidelines
+
+Icon requirements:
+- Size: 256x256 pixels
+- Format: PNG
+- Design: Simple, clean, recognizable

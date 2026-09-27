@@ -1,0 +1,15 @@
+PLACEHOLDER_SPLASH_SCREEN_FILE
+
+This is a placeholder file. Replace with actual 1284x2778px PNG splash screen before app store submission.
+
+For production, create a proper splash screen using:
+- Apple Human Interface Guidelines for iOS
+- Your brand colors and logo
+- Minimal design with clear branding
+
+Splash screen requirements:
+- Size: 1284x2778 pixels (iPhone X sizing)
+- Format: PNG
+- Content: Logo, app name, or branding
+- Background: Solid color or subtle gradient
+- Safe zone: Avoid status bar and home indicator areas

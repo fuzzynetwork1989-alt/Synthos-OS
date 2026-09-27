@@ -1,0 +1,106 @@
+{
+  "expo": {
+    "name": "Synthos OS",
+    "slug": "synthos-os",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.synthos.os",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Synthos OS needs camera access for visual input and augmented reality features",
+        "NSMicrophoneUsageDescription": "Synthos OS needs microphone access for voice commands and audio processing",
+        "NSPhotoLibraryUsageDescription": "Synthos OS needs photo library access to analyze and process images",
+        "NSFaceIDUsageDescription": "Synthos OS uses Face ID for secure authentication",
+        "NSLocationWhenInUseUsageDescription": "Synthos OS needs location access for context-aware features",
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSBluetoothAlwaysUsageDescription": "Synthos OS needs Bluetooth access for device connectivity",
+        "NSBluetoothPeripheralUsageDescription": "Synthos OS needs Bluetooth access for device connectivity"
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "privacyManifest": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.synthos.os",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "BLUETOOTH_CONNECT",
+        "BLUETOOTH_SCAN",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "VIBRATE",
+        "USE_FINGERPRINT",
+        "USE_BIOMETRIC"
+      ],
+      "intentFilters": [
+        {
+          "action": "MAIN",
+          "category": ["LAUNCHER"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-local-authentication"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id-here"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "owner": "synthos-os",
+    "description": "Next-Generation Cognitive, Agentic, and Self-Organizing AI Operating System",
+    "githubUrl": "https://github.com/fuzzynetwork1989-alt/Synthos-OS"
+  }
+}

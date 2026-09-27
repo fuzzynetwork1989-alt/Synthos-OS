@@ -1,0 +1,14 @@
+PLACEHOLDER_ADAPTIVE_ICON_FILE
+
+This is a placeholder file. Replace with actual 1024x1024px PNG adaptive icon before app store submission.
+
+For production, create a proper adaptive icon using:
+- Android Material Design guidelines
+- Safe zone (66.6% of center) for important content
+- Layered approach with separate foreground and background
+
+Adaptive icon requirements:
+- Size: 1024x1024 pixels
+- Format: PNG with transparency (foreground layer)
+- Safe zone: Center 66.6% should contain main icon
+- Outer edges can be cropped by device masks

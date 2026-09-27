@@ -9,7 +9,7 @@ on:
 jobs:
   python-formatting:
     runs-on: ubuntu-latest
-    if: false  # Disabled until Python services are implemented
+    if: true  # Enabled for RSI Engine (fully implemented)
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -21,11 +21,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install black
       - name: Check formatting
-        run: black --check .
+        run: black --check services/rsi-engine
 
   python-linting:
     runs-on: ubuntu-latest
-    if: false  # Disabled until Python services are implemented
+    if: true  # Enabled for RSI Engine (fully implemented)
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -37,11 +37,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
       - name: Lint with ruff
-        run: ruff check .
+        run: ruff check services/rsi-engine
 
   python-typing:
     runs-on: ubuntu-latest
-    if: false  # Disabled until services are implemented
+    if: true  # Enabled for RSI Engine (fully implemented)
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -53,7 +53,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install mypy
       - name: Type check with mypy
-        run: mypy .
+        run: mypy services/rsi-engine
 
   node-formatting:
     runs-on: ubuntu-latest
@@ -102,6 +102,60 @@ jobs:
         run: pnpm install
       - name: Run tests
         run: pnpm run test
+
+  mobile-typecheck:
+    runs-on: ubuntu-latest
+    if: false  # Disabled until mobile client is complete
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/mobile-client/package-lock.json
+      - name: Install dependencies
+        working-directory: apps/mobile-client
+        run: npm ci
+      - name: Run type check
+        working-directory: apps/mobile-client
+        run: npm run typecheck
+
+  mobile-linting:
+    runs-on: ubuntu-latest
+    if: false  # Disabled until mobile client is complete
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/mobile-client/package-lock.json
+      - name: Install dependencies
+        working-directory: apps/mobile-client
+        run: npm ci
+      - name: Run linting
+        working-directory: apps/mobile-client
+        run: npm run lint
+
+  mobile-tests:
+    runs-on: ubuntu-latest
+    if: false  # Disabled until mobile client is complete
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/mobile-client/package-lock.json
+      - name: Install dependencies
+        working-directory: apps/mobile-client
+        run: npm ci
+      - name: Run tests
+        working-directory: apps/mobile-client
+        run: npm test -- --passWithNoTests
 
   secret-scan:
     runs-on: ubuntu-latest

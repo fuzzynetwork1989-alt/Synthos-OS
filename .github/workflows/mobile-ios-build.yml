@@ -1,0 +1,141 @@
+name: Mobile iOS Build
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/mobile-client/**'
+      - '.github/workflows/mobile-ios-build.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/mobile-client/**'
+      - '.github/workflows/mobile-ios-build.yml'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile (development, preview, production)'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+jobs:
+  ios-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/mobile-client/package-lock.json
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        working-directory: apps/mobile-client
+        run: npm ci
+
+      - name: Run type check
+        working-directory: apps/mobile-client
+        run: npm run typecheck
+
+      - name: Run linting
+        working-directory: apps/mobile-client
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: apps/mobile-client
+        run: npm test -- --passWithNoTests
+
+      - name: Determine build profile
+        id: profile
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "profile=${{ github.event.inputs.profile }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "profile=production" >> $GITHUB_OUTPUT
+          else
+            echo "profile=preview" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build iOS app
+        working-directory: apps/mobile-client
+        run: eas build --platform ios --profile ${{ steps.profile.outputs.profile }} --non-interactive
+
+      - name: Upload build artifacts
+        if: steps.profile.outputs.profile != 'development'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-${{ steps.profile.outputs.profile }}
+          path: |
+            apps/mobile-client/*.ipa
+            apps/mobile-client/*.tar.gz
+          retention-days: 7
+
+  ios-simulator-build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/mobile-client/package-lock.json
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        working-directory: apps/mobile-client
+        run: npm ci
+
+      - name: Build for iOS Simulator
+        working-directory: apps/mobile-client
+        run: eas build --platform ios --profile simulator --non-interactive
+
+  ios-submit:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: ios-build
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit to App Store
+        working-directory: apps/mobile-client
+        run: eas submit --platform ios --non-interactive
+        env:
+          EXPO_APPLE_ID: ${{ secrets.EXPO_APPLE_ID }}
+          EXPO_APPLE_ASC_APP_ID: ${{ secrets.EXPO_APPLE_ASC_APP_ID }}
+          EXPO_APPLE_TEAM_ID: ${{ secrets.EXPO_APPLE_TEAM_ID }}

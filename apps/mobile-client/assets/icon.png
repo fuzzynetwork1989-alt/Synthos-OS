@@ -1,0 +1,14 @@
+PLACEHOLDER_ICON_FILE
+
+This is a placeholder file. Replace with actual 1024x1024px PNG icon before app store submission.
+
+For production, create a proper app icon using:
+- Apple Human Interface Guidelines for iOS
+- Material Design guidelines for Android
+- Professional design tools like Figma, Sketch, or Adobe Illustrator
+
+Icon requirements:
+- Size: 1024x1024 pixels
+- Format: PNG with transparency
+- Style: Clean, recognizable at small sizes
+- No text or complex details

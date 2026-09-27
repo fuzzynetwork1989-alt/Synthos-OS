@@ -13,6 +13,11 @@ This register is maintained by Devin Autopilot Mode.
 | GAP-007 | Medium | 17 | Persistence | No encryption at rest for sensitive data | Database compromise could expose private information | Implement transparent data encryption (TDE) | Encryption verified in production | Open |
 | GAP-008 | Medium | 18 | Synchronization | No conflict resolution strategy | Multi-device sync could cause data loss | Implement conflict detection and resolution | Conflict resolution tested | Open |
 | GAP-009 | Low | 21 | Learning | No feedback collection mechanism | Cannot learn from user interactions for improvement | Add feedback capture and analysis | Feedback pipeline operational | Open |
+| GAP-010 | High | 16 | Evaluation | RSI test suite is structural only | RSI system functionality cannot be verified operationally | Convert structural tests to functional tests | Functional RSI tests pass | Partial |
+| GAP-011 | Medium | 20 | Deployment | CI/CD enabled only for RSI Engine | Cannot validate code quality for other services | Enable CI/CD jobs as services are implemented | CI/CD jobs running and passing | Partial |
+| GAP-012 | High | 20 | Environment | Python environment not set up | Cannot run functional tests or services | Install Python dependencies and set up virtual environment | Python environment functional | Open |
+| GAP-013 | Critical | 1 | Implementation | Most services are empty directories | System cannot function end-to-end | Implement core services (Model Gateway, Memory Engine, Evaluation Engine) | Core services implemented | Open |
+| GAP-014 | High | 16 | Evaluation | No functional test suite | Cannot validate system behavior operationally | Create functional tests for implemented components | Functional tests pass | Open |
 
 Severity definitions:
 
