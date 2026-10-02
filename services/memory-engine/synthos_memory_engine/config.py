@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     app_name: str = "Synthos Memory Engine"
     app_version: str = "0.1.0"
     environment: str = "development"
-    debug: bool = True
+    memory_debug: bool = True
     
     # Server
     host: str = "0.0.0.0"
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     workers: int = 1
     
     # Database
-    database_url: str = "postgresql+asyncpg://synthos:synthos_dev_password@localhost:5432/synthos_os"
+    database_url: str = "sqlite+aiosqlite:///./synthos_memory.db"
     redis_url: str = "redis://localhost:6379"
     
     # Memory Configuration

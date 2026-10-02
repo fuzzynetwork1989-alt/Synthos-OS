@@ -237,7 +237,7 @@ class ContinuousRSI:
             )
             return
     
-    def _check_performance_degradation(self, metrics: MetricsDict) -> bool:
+    def _check_performance_degradation(self, metrics: Dict) -> bool:
         """Check if performance has degraded"""
         if not self.performance_baseline:
             return False
@@ -258,7 +258,7 @@ class ContinuousRSI:
         
         return False
     
-    def _check_error_rate(self, metrics: MetricsDict) -> bool:
+    def _check_error_rate(self, metrics: Dict) -> bool:
         """Check if error rate exceeds threshold"""
         error_rate = metrics.get("error_rate", 0.0)
         threshold = self.config["error_rate_threshold"]
@@ -269,7 +269,7 @@ class ContinuousRSI:
         
         return False
     
-    def _check_resource_pressure(self, metrics: MetricsDict) -> bool:
+    def _check_resource_pressure(self, metrics: Dict) -> bool:
         """Check if resource pressure is high"""
         cpu_usage = metrics.get("cpu_usage", 0.0)
         memory_usage = metrics.get("memory_usage", 0.0)
@@ -281,7 +281,7 @@ class ContinuousRSI:
         
         return False
     
-    def _check_improvement_opportunities(self, metrics: MetricsDict) -> bool:
+    def _check_improvement_opportunities(self, metrics: Dict) -> bool:
         """Check for improvement opportunities using Meta-RSI"""
         # Get strategy recommendation
         strategy = self.meta_rsi.recommend_strategy()
@@ -430,7 +430,7 @@ class ContinuousRSI:
         self.performance_baseline = self._collect_current_metrics()
         logger.info("Performance baseline established", baseline=self.performance_baseline)
     
-    def _collect_current_metrics(self) -> MetricsDict:
+    def _collect_current_metrics(self) -> Dict:
         """Collect current system metrics"""
         # Placeholder - in production, this would collect real metrics
         return {

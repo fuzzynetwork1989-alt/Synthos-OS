@@ -11,11 +11,11 @@ class Settings(BaseSettings):
     app_name: str = "Synthos RSI Engine"
     app_version: str = "0.1.0"
     environment: str = "development"
-    debug: bool = False
+    rsi_debug: bool = True
 
     # Server
     host: str = "0.0.0.0"
-    port: int = 8001
+    port: int = 8004
     workers: int = 1
 
     # RSI Configuration

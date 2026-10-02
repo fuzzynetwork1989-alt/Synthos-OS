@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { 
-  Activity, 
-  Brain, 
-  Database, 
-  Settings, 
-  Cpu, 
+import {
+  Activity,
+  Brain,
+  Database,
+  Settings,
+  Cpu,
   MemoryStick,
   Network,
   Shield,
@@ -16,9 +16,12 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
-  XCircle
+  XCircle,
+  RefreshCw
 } from 'lucide-react'
 import { useSystemStatus } from '../hooks/useSystemStatus'
+import RSIControlPanel from '../components/RSIControlPanel'
+import { apiService } from '../services/api'
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -28,6 +31,7 @@ export default function Dashboard() {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Activity },
+    { id: 'rsi', label: 'RSI Engine', icon: Brain },
     { id: 'cognitive', label: 'Cognitive Engine', icon: Brain },
     { id: 'memory', label: 'Memory System', icon: Database },
     { id: 'tools', label: 'Tool Gateway', icon: Zap },
@@ -59,10 +63,16 @@ export default function Dashboard() {
     )
   }
 
-  const handleEmergencyStop = () => {
+  const handleEmergencyStop = async () => {
     if (confirm('Are you sure you want to initiate emergency stop? This will immediately halt all AI operations.')) {
-      // Implement emergency stop logic
-      console.log('Emergency stop initiated')
+      try {
+        await apiService.emergencyStop()
+        console.log('Emergency stop initiated')
+        alert('Emergency stop executed successfully')
+      } catch (error) {
+        console.error('Failed to execute emergency stop:', error)
+        alert('Failed to execute emergency stop. Check console for details.')
+      }
     }
   }
 
@@ -196,7 +206,14 @@ export default function Dashboard() {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-gray-400">System Online</span>
             </div>
-            <button 
+            <button
+              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+              onClick={() => window.location.reload()}
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Refresh</span>
+            </button>
+            <button
               className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               onClick={handleEmergencyStop}
             >
@@ -325,6 +342,7 @@ export default function Dashboard() {
             </div>
           )}
 
+          {activeTab === 'rsi' && <RSIControlPanel />}
           {activeTab === 'cognitive' && renderCognitiveEngine()}
           {activeTab === 'memory' && renderMemorySystem()}
 

@@ -100,6 +100,37 @@ First-of-its-kind spatial computing experience for Meta Quest 3, bringing the en
 
 ## Technical Implementation
 
+### System Architecture
+
+The Quest 3 app is built with a modular architecture that separates concerns into distinct systems:
+
+#### Core Systems
+1. **Spatial Computing** (`src/spatial/`)
+   - `SynthOSSpatial.js` - Main spatial computing coordinator
+   - `MetaSpatialSDK.js` - Meta Spatial SDK integration layer with simulation fallback
+
+2. **AI Integration** (`src/ai/`)
+   - `SynthOSAI.js` - Spatial AI with context-aware responses
+
+3. **Audio Systems** (`src/audio/`)
+   - `VoiceInput.js` - Natural speech recognition and voice commands
+   - `SpatialAudio.js` - 3D positional audio with HRTF
+
+4. **Rendering** (`src/rendering/`)
+   - `Renderer3D.js` - 3D rendering with React Three Fiber integration
+
+5. **Input Management** (`src/input/`)
+   - `InputManager.js` - Unified gesture/gaze/controller/voice input handling
+
+6. **UI System** (`src/ui/`)
+   - `HolographicUI.js` - 3D spatial interface elements
+
+7. **Performance** (`src/performance/`)
+   - `PerformanceManager.js` - GPU, memory, and power optimization
+
+8. **Configuration** (`src/config/`)
+   - `ConfigManager.js` - App settings and user preferences
+
 ### Meta Spatial SDK Integration
 
 #### Core Components
@@ -211,7 +242,59 @@ class SynthOSAI {
 - **Network Optimization**: Efficient data transfer
 - **Sleep Modes**: Intelligent power management
 
+## Development
+
+### Prerequisites
+- Node.js 16+
+- npm or yarn
+- Meta Quest Developer account (for actual device deployment)
+
+### Installation
+```bash
+cd apps/quest-3-app
+npm install
+```
+
+### Running the Application
+```bash
+# Development mode with hot reload
+npm run dev
+
+# Production build
+npm run build
+
+# Start production build
+npm start
+```
+
+### Quest 3 Build Commands
+```bash
+# Build for Quest 3
+npm run build:quest
+
+# Deploy to connected Quest 3 device
+npm run deploy:quest
+
+# Prepare for Meta Quest Store submission
+npm run store:quest
+```
+
+### Development Workflow
+1. Make changes to source files
+2. Test locally with `npm run dev`
+3. Build with `npm run build`
+4. Test on Quest 3 with `npm run deploy:quest`
+5. Prepare for store with `npm run store:quest`
+
 ## Deployment
+
+### Build Configuration
+The `quest-manifest.json` file contains all Quest 3-specific configuration:
+- App metadata (name, version, description)
+- Capabilities (hand tracking, eye tracking, passthrough, etc.)
+- Permissions (microphone, camera, internet)
+- Performance requirements (target FPS, memory limits)
+- Store listing information
 
 ### Meta Quest Store Submission
 

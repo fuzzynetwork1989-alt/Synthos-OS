@@ -25,7 +25,7 @@ catch {
 
 # Download Python installer
 Write-Host "Downloading Python 3.10 installer..." -ForegroundColor Yellow
-$pythonUrl = "https://www.python.org/ftp/python/3.10.13/python-3.10.13-amd64.exe"
+$pythonUrl = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
 $pythonInstaller = "$env:TEMP\Python-Installer.exe"
 
 try {
